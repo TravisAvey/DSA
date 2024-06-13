@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct Node {
   struct Node *next;
@@ -19,6 +20,9 @@ void deleteNode(uint8_t data, struct Node **head);
 
 // checks if data is already in the list
 bool contains(uint8_t data, struct Node *head);
+
+// reverses the linked-list
+void reverse(struct Node **head);
 
 // helper function to print out the list
 void printList(struct Node *head);
@@ -43,6 +47,8 @@ int main(int argc, char *argv[]) {
   } else {
     printf("7 is not in list\n");
   }
+  printList(head);
+  reverse(&head);
   printList(head);
 
   return 0;
@@ -91,6 +97,22 @@ void preprendNode(uint8_t data, struct Node **head) {
   p = *head;
   node->next = p;
   *head = node;
+}
+
+void reverse(struct Node **head) {
+
+  struct Node *prev = NULL;
+  struct Node *next = NULL;
+  struct Node *curr = *head;
+
+  while (curr != NULL) {
+    next = curr->next;
+    curr->next = prev;
+
+    prev = curr;
+    curr = next;
+  }
+  *head = prev;
 }
 
 bool contains(uint8_t data, struct Node *head) {
