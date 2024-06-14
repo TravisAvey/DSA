@@ -32,23 +32,14 @@ int main(int argc, char *argv[]) {
   struct Node *head = (struct Node *)malloc(sizeof(struct Node));
   printList(head);
 
-  if (contains(10, head)) {
-    printf("10 is in list\n");
-  } else {
-    printf("10 is not in list\n");
-  }
   appendNode(8, &head);
   appendNode(12, &head);
   appendNode(9, &head);
+
   printList(head);
-  preprendNode(7, &head);
-  if (contains(7, head)) {
-    printf("7 is in list\n");
-  } else {
-    printf("7 is not in list\n");
-  }
-  printList(head);
-  reverse(&head);
+
+  preprendNode(1, &head);
+
   printList(head);
 
   return 0;
@@ -61,25 +52,39 @@ void appendNode(uint8_t data, struct Node **head) {
     return;
   }
 
-  struct Node *temp = (struct Node *)malloc(sizeof(struct Node));
-  temp->data = data;
-  temp->next = NULL;
-
   if (*head == NULL) {
     printf("head is null, adding to front of list\n");
-    *head = temp;
-  } else {
-    struct Node *p = *head;
-    while (p->next != NULL)
-      p = p->next;
-    p->next = temp;
+    appendNode(data, head);
+    return;
   }
+
+  struct Node *curr, *node;
+
+  node = (struct Node *)malloc(sizeof(struct Node));
+
+  curr = *head;
+  node->data = data;
+  node->next = NULL;
+  while (curr->next) {
+    curr = curr->next;
+  }
+  curr->next = node;
 }
 
 void deleteNode(uint8_t data, struct Node **head) {
   if (!head) {
     printf("list is empty\n");
     return;
+  }
+  struct Node *curr = *head;
+  struct Node *prev = NULL;
+
+  while (curr) {
+    if (curr->data == data) {
+      prev->next = curr->next;
+    }
+    prev = curr;
+    curr = curr->next;
   }
 }
 
@@ -90,12 +95,13 @@ void preprendNode(uint8_t data, struct Node **head) {
   }
 
   struct Node *node = (struct Node *)malloc(sizeof(struct Node));
-  node->data = data;
-  node->next = NULL;
+  if (!node) {
+    printf("error creating node\n");
+    return;
+  }
 
-  struct Node *p;
-  p = *head;
-  node->next = p;
+  node->data = data;
+  node->next = *head;
   *head = node;
 }
 
@@ -135,17 +141,10 @@ bool contains(uint8_t data, struct Node *head) {
 // helper function to print out the list
 void printList(struct Node *head) {
 
-  if (!head->next) {
-    printf("linked-list is empty\n");
-    return;
-  }
-
-  struct Node *current = head->next;
-
   printf("head -> ");
-  while (current != NULL) {
-    printf("%d -> ", current->data);
-    current = current->next;
+  while (head) {
+    printf("%d -> ", head->data);
+    head = head->next;
   }
   printf(" END\n");
 }
