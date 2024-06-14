@@ -36,9 +36,11 @@ int main(int argc, char *argv[]) {
   appendNode(12, &head);
   appendNode(9, &head);
 
+  printf("should be 8-12-9...\n");
   printList(head);
 
   preprendNode(1, &head);
+  appendNode(13, &head);
 
   printList(head);
 
@@ -52,23 +54,19 @@ void appendNode(uint8_t data, struct Node **head) {
     return;
   }
 
+  struct Node *n = (struct Node *)malloc(sizeof(struct Node));
+  n->data = data;
+  n->next = NULL;
+
   if (*head == NULL) {
-    printf("head is null, adding to front of list\n");
-    appendNode(data, head);
-    return;
+    *head = n;
+  } else {
+    struct Node *p = *head;
+    while (p->next != NULL) {
+      p = p->next;
+    }
+    p->next = n;
   }
-
-  struct Node *curr, *node;
-
-  node = (struct Node *)malloc(sizeof(struct Node));
-
-  curr = *head;
-  node->data = data;
-  node->next = NULL;
-  while (curr->next) {
-    curr = curr->next;
-  }
-  curr->next = node;
 }
 
 void deleteNode(uint8_t data, struct Node **head) {
@@ -101,6 +99,7 @@ void preprendNode(uint8_t data, struct Node **head) {
   }
 
   node->data = data;
+
   node->next = *head;
   *head = node;
 }
@@ -141,10 +140,14 @@ bool contains(uint8_t data, struct Node *head) {
 // helper function to print out the list
 void printList(struct Node *head) {
 
+  if (head->next == NULL)
+    return;
+
+  struct Node *p = head;
   printf("head -> ");
-  while (head) {
-    printf("%d -> ", head->data);
-    head = head->next;
+  while (p->next != NULL) {
+    printf("%d -> ", p->data);
+    p = p->next;
   }
-  printf(" END\n");
+  printf("%d -> END\n", p->data);
 }
