@@ -13,7 +13,10 @@ struct Node {
 void appendNode(uint8_t data, struct Node **head);
 
 // add a node to the beginning of the list
-void preprendNode(uint8_t data, struct Node **head);
+void prependNode(uint8_t data, struct Node **head);
+
+// add a node after loc
+void insertNode(uint8_t data, uint8_t loc, struct Node **head);
 
 // delete a node. assumption that the list contains only one data object
 void deleteNode(uint8_t data, struct Node **head);
@@ -29,19 +32,26 @@ void printList(struct Node *head);
 
 int main(int argc, char *argv[]) {
 
-  struct Node *head = (struct Node *)malloc(sizeof(struct Node));
+  struct Node *head = NULL;
+
   printList(head);
 
   appendNode(8, &head);
   appendNode(12, &head);
   appendNode(9, &head);
 
-  printf("should be 8-12-9...\n");
+  printf("should be 8->12->9\n");
   printList(head);
 
-  preprendNode(1, &head);
-  appendNode(13, &head);
+  insertNode(4, 12, &head);
 
+  printf("\nshould be 8->12->4->9\n");
+  printList(head);
+
+  prependNode(1, &head);
+  prependNode(13, &head);
+
+  printf("\nshould be 13->1->8->12->4->9\n");
   printList(head);
 
   return 0;
@@ -60,13 +70,14 @@ void appendNode(uint8_t data, struct Node **head) {
 
   if (*head == NULL) {
     *head = n;
-  } else {
-    struct Node *p = *head;
-    while (p->next != NULL) {
-      p = p->next;
-    }
-    p->next = n;
+    return;
   }
+
+  struct Node *p = *head;
+  while (p->next != NULL) {
+    p = p->next;
+  }
+  p->next = n;
 }
 
 void deleteNode(uint8_t data, struct Node **head) {
@@ -86,7 +97,7 @@ void deleteNode(uint8_t data, struct Node **head) {
   }
 }
 
-void preprendNode(uint8_t data, struct Node **head) {
+void prependNode(uint8_t data, struct Node **head) {
   if (contains(data, *head)) {
     printf("%d is already in this list\n", data);
     return;
@@ -102,6 +113,33 @@ void preprendNode(uint8_t data, struct Node **head) {
 
   node->next = *head;
   *head = node;
+}
+
+void insertNode(uint8_t data, uint8_t loc, struct Node **head) {
+  if (contains(data, *head)) {
+    printf("%d is already in this list\n", data);
+    return;
+  }
+
+  struct Node *n = (struct Node *)malloc(sizeof(struct Node));
+  n->data = data;
+  n->next = NULL;
+
+  if (head == NULL) {
+    *head = n;
+  } else {
+    struct Node *current = *head;
+    while (current) {
+      if (current->data == loc) {
+        n->next = current->next;
+        current->next = n;
+        return;
+      }
+      current = current->next;
+    }
+    // loc not in list.. append to end
+    current = n;
+  }
 }
 
 void reverse(struct Node **head) {
@@ -139,9 +177,9 @@ bool contains(uint8_t data, struct Node *head) {
 
 // helper function to print out the list
 void printList(struct Node *head) {
-
-  if (head->next == NULL)
+  if (!head) {
     return;
+  }
 
   struct Node *p = head;
   printf("head -> ");
