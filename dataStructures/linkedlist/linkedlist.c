@@ -54,6 +54,14 @@ int main(int argc, char *argv[]) {
   printf("\nshould be 13->1->8->12->4->9\n");
   printList(head);
 
+  printf("deleting 8\nshould be 13->1->12->4->9\n");
+  deleteNode(8, &head);
+  printList(head);
+
+  reverse(&head);
+  printf("\nreversed:\n");
+  printList(head);
+
   return 0;
 }
 
