@@ -58,6 +58,10 @@ int main(int argc, char *argv[]) {
   deleteNode(8, &head);
   printList(head);
 
+  insertNode(15, 100, &head);
+  printf("\nshould be 13->1->12->4->9->15\n");
+  printList(head);
+
   reverse(&head);
   printf("\nreversed:\n");
   printList(head);
@@ -146,7 +150,7 @@ void insertNode(uint8_t data, uint8_t loc, struct Node **head) {
       current = current->next;
     }
     // loc not in list.. append to end
-    current = n;
+    appendNode(data, head);
   }
 }
 
